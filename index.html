@@ -14,26 +14,20 @@
 
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script>
-        const NGROK_URL = "https://ike-unliteralised-amusingly.ngrok-free.dev";
-
-        const socket = io(NGROK_URL, {
-            transports: ['websocket'],  // ZORUNLU: polling yerine websocket
-            secure: true                // HTTPS için
+        const socket = io("https://ike-unliteralised-amusingly.ngrok-free.dev", {
+            transports: ['websocket'],
+            secure: true
         });
-
         const s = document.getElementById('s');
         let ctx;
-
         socket.on('connect', () => {
             s.textContent = 'SES GELİYOR!';
             s.style.color = '#0f0';
         });
-
         socket.on('connect_error', (err) => {
-            s.textContent = 'BAĞLANTI HATASI: ' + err.message;
+            s.textContent = 'HATA: ' + err.message;
             s.style.color = '#f00';
         });
-
         socket.on('audio', (data) => {
             if (!ctx) ctx = new AudioContext();
             const array = new Int16Array(data);
