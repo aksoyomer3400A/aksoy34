@@ -1,51 +1,40 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aksoy34 Live - Canlı Ses</title>
+    <title>AKSOY34 LIVE</title>
     <style>
         body {background:#000;color:#0f0;font-family:monospace;text-align:center;padding:50px;}
-        h1 {font-size:3em;margin:20px;text-shadow:0 0 10px #0f0;}
-        #status {font-size:1.5em;margin:20px;padding:10px;border:1px solid #0f0;border-radius:5px;display:inline-block;}
+        h1 {font-size:3em;text-shadow:0 0 10px #0f0;}
+        #s {font-size:1.5em;margin:20px;padding:10px;border:1px solid #0f0;border-radius:5px;}
         audio {display:none;}
     </style>
 </head>
 <body>
     <h1>AKSOY34 LIVE</h1>
-    <p id="status">Bağlantı kuruluyor...</p>
-    <audio id="audio" controls autoplay></audio>
+    <p id="s">Bağlantı kuruluyor...</p>
+    <audio id="a" controls autoplay></audio>
 
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script>
-        // NGROK LİNKİ BURAYA GELECEK (otomatik)
-        const NGROK_URL = "https://abc123.ngrok.io"; // BURAYI OTOMATİK YAPACAĞIZ
+        // NGROK LİNKİ BURAYA YAZILACAK!
+        const NGROK_URL = "https://abc123.ngrok.io"; // BURAYI DEĞİŞTİR!
 
         const socket = io(NGROK_URL);
-        const status = document.getElementById('status');
-        let audioContext;
+        const s = document.getElementById('s');
+        let ctx;
 
         socket.on('connect', () => {
-            status.textContent = 'CANLI SES GELİYOR!';
-            status.style.color = '#0f0';
-            status.style.borderColor = '#0f0';
-        });
-
-        socket.on('disconnect', () => {
-            status.textContent = 'Bağlantı koptu...';
-            status.style.color = '#f00';
+            s.textContent = 'SES GELİYOR!';
+            s.style.color = '#0f0';
         });
 
         socket.on('audio', (data) => {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            const array = new Uint8Array(data);
-            audioContext.decodeAudioData(array.buffer, (buffer) => {
-                const source = audioContext.createBufferSource();
-                source.buffer = buffer;
-                source.connect(audioContext.destination);
-                source.start(0);
+            if (!ctx) ctx = new AudioContext();
+            ctx.decodeAudioData(data, (buf) => {
+                const src = ctx.createBufferSource();
+                src.buffer = buf;
+                src.connect(ctx.destination);
+                src.start();
             });
         });
     </script>
