@@ -14,7 +14,7 @@
 
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script>
-        const socket = io("https://abc123.ngrok.io"); // PROGRAM DEĞİŞTİRECEK
+        const socket = io("https://ike-unliteralised-amusingly.ngrok-free.dev");
         const s = document.getElementById('s');
         let ctx;
         socket.on('connect', () => {
@@ -23,12 +23,13 @@
         });
         socket.on('audio', (data) => {
             if (!ctx) ctx = new AudioContext();
-            ctx.decodeAudioData(new Uint8Array(data).buffer, (buf) => {
-                const src = ctx.createBufferSource();
-                src.buffer = buf;
-                src.connect(ctx.destination);
-                src.start();
-            });
+            const array = new Int16Array(data);
+            const buffer = ctx.createBuffer(1, array.length, 44100);
+            buffer.copyToChannel(array, 0);
+            const src = ctx.createBufferSource();
+            src.buffer = buffer;
+            src.connect(ctx.destination);
+            src.start();
         });
     </script>
 </body>
