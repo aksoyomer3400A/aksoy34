@@ -6,31 +6,24 @@
         body {background:#000;color:#0f0;font-family:monospace;text-align:center;padding:50px;}
         h1 {font-size:3em;text-shadow:0 0 10px #0f0;}
         #s {font-size:1.5em;margin:20px;padding:10px;border:1px solid #0f0;border-radius:5px;}
-        audio {display:none;}
     </style>
 </head>
 <body>
     <h1>AKSOY34 LIVE</h1>
     <p id="s">Bağlantı kuruluyor...</p>
-    <audio id="a" controls autoplay></audio>
 
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script>
-        // NGROK LİNKİ BURAYA YAZILACAK!
-        const NGROK_URL = "https://a1b2c3d4.ngrok.io";
-
-        const socket = io(NGROK_URL);
+        const socket = io("https://abc123.ngrok.io"); // PROGRAM OTOMATİK DEĞİŞTİRECEK
         const s = document.getElementById('s');
         let ctx;
-
         socket.on('connect', () => {
             s.textContent = 'SES GELİYOR!';
             s.style.color = '#0f0';
         });
-
         socket.on('audio', (data) => {
             if (!ctx) ctx = new AudioContext();
-            ctx.decodeAudioData(data, (buf) => {
+            ctx.decodeAudioData(data.buffer, (buf) => {
                 const src = ctx.createBufferSource();
                 src.buffer = buf;
                 src.connect(ctx.destination);
