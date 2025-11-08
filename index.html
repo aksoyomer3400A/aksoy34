@@ -3,88 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aksoy34 Live - Canlı Ses Dinleme</title>
+    <title>Aksoy34 Live - Canlı Ses</title>
     <style>
-        body {
-            background: #000;
-            color: #0f0;
-            font-family: 'Courier New', monospace;
-            text-align: center;
-            padding: 50px;
-            margin: 0;
-        }
-        h1 {
-            font-size: 3em;
-            margin: 20px 0;
-            text-shadow: 0 0 10px #0f0;
-        }
-        #status {
-            font-size: 1.5em;
-            margin: 20px;
-            padding: 10px;
-            border: 1px solid #0f0;
-            border-radius: 5px;
-            display: inline-block;
-        }
-        audio {
-            width: 80%;
-            max-width: 400px;
-            margin: 20px auto;
-            display: block;
-        }
-        .info {
-            font-size: 0.9em;
-            color: #666;
-            margin-top: 30px;
-        }
+        body {background:#000;color:#0f0;font-family:monospace;text-align:center;padding:50px;}
+        h1 {font-size:3em;margin:20px;text-shadow:0 0 10px #0f0;}
+        #status {font-size:1.5em;margin:20px;padding:10px;border:1px solid #0f0;border-radius:5px;display:inline-block;}
+        audio {display:none;}
     </style>
 </head>
 <body>
     <h1>AKSOY34 LIVE</h1>
-    <p id="status">Bağlantı kuruluyor... (Yayın aktif değil)</p>
-    <audio id="audio" controls autoplay style="display:none;"></audio>
-    
-    <div class="info">
-        <p>Canlı ses yayını için yayıncının bağlantısı aktif olmalı.</p>
-        <p>Otomatik olarak sesi algılayıp çalacak.</p>
-    </div>
+    <p id="status">Bağlantı kuruluyor...</p>
+    <audio id="audio" controls autoplay></audio>
 
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script>
-        const socket = io();  // Socket.IO bağlantısı (ngrok veya localhost)
+        // NGROK LİNKİ BURAYA GELECEK (otomatik)
+        const NGROK_URL = "https://abc123.ngrok.io"; // BURAYI OTOMATİK YAPACAĞIZ
+
+        const socket = io(NGROK_URL);
         const status = document.getElementById('status');
-        const audioElement = document.getElementById('audio');
         let audioContext;
 
         socket.on('connect', () => {
-            status.textContent = 'CANLI SES AKTİF! Dinleniyor...';
+            status.textContent = 'CANLI SES GELİYOR!';
             status.style.color = '#0f0';
             status.style.borderColor = '#0f0';
         });
 
         socket.on('disconnect', () => {
-            status.textContent = 'Bağlantı koptu... (Yayın kapalı)';
+            status.textContent = 'Bağlantı koptu...';
             status.style.color = '#f00';
-            status.style.borderColor = '#f00';
         });
 
         socket.on('audio', (data) => {
-            // Ses verisini decode et ve çal
             if (!audioContext) {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
             }
-            audioContext.decodeAudioData(new Uint8Array(data).buffer, (buffer) => {
+            const array = new Uint8Array(data);
+            audioContext.decodeAudioData(array.buffer, (buffer) => {
                 const source = audioContext.createBufferSource();
                 source.buffer = buffer;
                 source.connect(audioContext.destination);
                 source.start(0);
             });
         });
-
-        // Sayfa yüklendiğinde bağlantıyı dene
-        window.onload = () => {
-            status.textContent = 'Bağlantı deneniyor...';
-        };
     </script>
 </body>
 </html>
